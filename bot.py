@@ -10,6 +10,8 @@ bot = Bot(token="5441576891:AAGiEIjU8zeJdZEOxAMzeMLjeNumGOAawic")
 dp = Dispatcher(bot)
 
 
+print('Hello World')
+
 # Хэндлер на команду /start
 @dp.message_handler(commands=["start"])
 async def cmd_start(message: types.Message):
