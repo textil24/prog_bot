@@ -4,7 +4,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
-TOKEN_API = '5494716985:AAGT8sfi28BG21qTDJD4rvu9ki5uCjiRSzY'
+TOKEN_API = '5886107638:AAEs26-_sJU6rZwg2k2GUKbDrd_ZRi_GZfM'
 
 storage = MemoryStorage()
 
