@@ -5,12 +5,9 @@ from aiogram import Bot, Dispatcher, types
 # Включаем логирование, чтобы не пропустить важные сообщения
 logging.basicConfig(level=logging.INFO)
 # Объект бота
-bot = Bot(token="5441576891:AAGiEIjU8zeJdZEOxAMzeMLjeNumGOAawic")
+bot = Bot(token="5494716985:AAGT8sfi28BG21qTDJD4rvu9ki5uCjiRSzY")
 # Диспетчер
 dp = Dispatcher(bot)
-
-
-print('Hello World')
 
 # Хэндлер на команду /start
 @dp.message_handler(commands=["start"])
@@ -26,5 +23,3 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-
-print("Matvey")
