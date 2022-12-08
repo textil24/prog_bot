@@ -7,7 +7,7 @@ from checker_question import handler
 from keyboards import keyboards
 from preview_bot import start, help
 
-TOKEN_API = '5886107638:AAF7Oej_W7wIyRm28CI7x9SvdVbLI50IziQ'
+TOKEN_API = '5886107638:AAHuzhRErcTNw2RCnmHyF79BCXsxcvDo284'
 
 storage = MemoryStorage()
 
@@ -19,7 +19,7 @@ keyboards.get_kb()
 start.start_command(dp)
 help.help_command(dp)
 
-handler.handler(dp)
+# handler.handler(dp)
 handlers.handlers(dp)
 
 
