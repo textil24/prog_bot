@@ -85,7 +85,7 @@ async def question_test():
         await ProfileStatesGroup.next()
 
 
-@dp.message_handler(state=ProfileStatesGroup.question)
+@dp.message_handler(state=ProfileStatesGroup1.question)
 async def load_name(message: types.Message, state: FSMContext) -> None:
     if message.text.lower().replace(' ', '') in questions_and_answers[keys[id]][0]:
         if message.text in questions_and_answers[keys[id]][0]:
