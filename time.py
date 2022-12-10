@@ -13,6 +13,8 @@ from aiogram.utils.markdown import hide_link
 
 TOKEN_API = '5886107638:AAHuzhRErcTNw2RCnmHyF79BCXsxcvDo284'
 
+text = ''
+
 storage = MemoryStorage()
 
 bot = Bot(TOKEN_API)
@@ -34,11 +36,8 @@ keys = list(questions_and_answers)
 class ProfileStatesGroup(StatesGroup):
 
     text = State()
-
-
-class ProfileStatesGroup1(StatesGroup):
-
     question = State()
+
 
 
 @dp.message_handler(commands=['start'])
@@ -50,7 +49,7 @@ async def choose_your_dinner(message: types.Message):
 
 
 @dp.message_handler(state=ProfileStatesGroup.text)
-async def load_name(message: types.Message, state: FSMContext) -> None:
+async def load_name(message: types.Message) -> None:
     # await scheduler('16:29')
     await scheduler(int(message.text))
 
@@ -67,25 +66,24 @@ async def question_test():
         #     text=f'Тра-та-та{hide_link(photo)}',
         #     parse_mode='HTML'
         # )
-        await ProfileStatesGroup1.next()
+        await ProfileStatesGroup.next()
     else:
         await bot.send_message(user_id, keys[id], parse_mode='html')
-        await ProfileStatesGroup1.next()
+        await ProfileStatesGroup.next()
 
 
-@dp.message_handler(state=ProfileStatesGroup1.question)
+@dp.message_handler(state=ProfileStatesGroup.question)
 async def load_name(message: types.Message, state: FSMContext) -> None:
-
     if message.text.lower().replace(' ', '') in questions_and_answers[keys[id]][0]:
         if message.text in questions_and_answers[keys[id]][0]:
             await message.answer('<b>Совершенно верно! Продолжай в том же духе...</b>', parse_mode='html')
             await bot.send_sticker(user_id, sticker=questions_and_answers[keys[id]][2])
-            await state.finish()
         else:
             await message.answer(f'<b>Это похоже на правильный ответ!</b> В следующий раз пишите: <b>{questions_and_answers[keys[id]][0][-1]}</b>', parse_mode='html')
             await bot.send_sticker(user_id, sticker=questions_and_answers[keys[id]][2])
-            await state.finish()
     elif message.text == '/end':
+        global text
+        text = message.text
         await message.answer('<b>Конец вопроса!!!</b>', parse_mode='html')
         await state.finish()
     else:
@@ -99,6 +97,9 @@ async def scheduler(time):
     while True:
         await aioschedule.run_pending()
         await asyncio.sleep(1)
+        print(text)
+        if text:
+            break
 
 
 if __name__ == '__main__':
