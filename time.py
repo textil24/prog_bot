@@ -10,6 +10,7 @@ from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.dispatcher import FSMContext
 from aiogram.types import Message, CallbackQuery
 from aiogram_dialog import Window, DialogManager, StartMode, DialogRegistry, Dialog, ChatEvent
+from aiogram_dialog.manager import registry
 from aiogram_dialog.widgets.kbd import Button, Multiselect, Column, ManagedCheckboxAdapter, ManagedMultiSelectAdapter
 from aiogram_dialog.widgets.managed import ManagedWidgetAdapter
 from aiogram_dialog.widgets.text import Const, Format
