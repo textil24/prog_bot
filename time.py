@@ -1,11 +1,18 @@
 import asyncio
+import operator
 import random
+from typing import Any
 
 import aioschedule
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.dispatcher import FSMContext
+from aiogram.types import Message, CallbackQuery
+from aiogram_dialog import Window, DialogManager, StartMode, DialogRegistry, Dialog, ChatEvent
+from aiogram_dialog.widgets.kbd import Button, Multiselect, Column, ManagedCheckboxAdapter, ManagedMultiSelectAdapter
+from aiogram_dialog.widgets.managed import ManagedWidgetAdapter
+from aiogram_dialog.widgets.text import Const, Format
 
 import json
 
@@ -17,6 +24,7 @@ storage = MemoryStorage()
 
 bot = Bot(TOKEN_API)
 dp = Dispatcher(bot, storage=storage)
+registry = DialogRegistry(dp)
 
 user_id = ''
 
@@ -32,13 +40,15 @@ keys = list(questions_and_answers)
 
 
 class ProfileStatesGroup(StatesGroup):
-
     text = State()
 
 
 class ProfileStatesGroup1(StatesGroup):
-
     question = State()
+
+
+class MySG(StatesGroup):
+    main = State()
 
 
 @dp.message_handler(commands=['start'])
@@ -75,14 +85,15 @@ async def question_test():
 
 @dp.message_handler(state=ProfileStatesGroup1.question)
 async def load_name(message: types.Message, state: FSMContext) -> None:
-
     if message.text.lower().replace(' ', '') in questions_and_answers[keys[id]][0]:
         if message.text in questions_and_answers[keys[id]][0]:
             await message.answer('<b>Совершенно верно! Продолжай в том же духе...</b>', parse_mode='html')
             await bot.send_sticker(user_id, sticker=questions_and_answers[keys[id]][2])
             await state.finish()
         else:
-            await message.answer(f'<b>Это похоже на правильный ответ!</b> В следующий раз пишите: <b>{questions_and_answers[keys[id]][0][-1]}</b>', parse_mode='html')
+            await message.answer(
+                f'<b>Это похоже на правильный ответ!</b> В следующий раз пишите: <b>{questions_and_answers[keys[id]][0][-1]}</b>',
+                parse_mode='html')
             await bot.send_sticker(user_id, sticker=questions_and_answers[keys[id]][2])
             await state.finish()
     elif message.text == '/end':
@@ -101,7 +112,52 @@ async def scheduler(time):
         await asyncio.sleep(1)
 
 
+async def get_data(**kwargs):
+    fruits = [
+        ("Фабричный метод", '1'),
+        ("Фасад", '2'),
+        ("Строитель", '3'),
+        ("Одиночка", '4'),
+        ("Декоратор", '5'),
+    ]
+    return {
+        "fruits": fruits,
+        "count": len(fruits),
+    }
+
+
+async def bots_filter_changed(c: CallbackQuery, multiselect_adapter: ManagedWidgetAdapter,
+                              dialog_manager: DialogManager, item_id: str):
+    print("Filter changed: ", item_id)
+
+
+fruits_kbd = Multiselect(
+    Format("✓ {item[0]}"),
+    Format("{item[0]}"),
+    id="m_fruits",
+    item_id_getter=operator.itemgetter(1),
+    items="fruits",
+    on_state_changed=bots_filter_changed,
+)
+
+column = Column(
+    fruits_kbd,
+)
+
+main_window = Window(
+    Const("Question"),
+    column,
+    state=MySG.main,
+    getter=get_data,
+)
+dialog = Dialog(main_window)
+registry.register(dialog)
+
+
+@dp.message_handler(commands=["button"])
+async def start(m: Message, dialog_manager: DialogManager):
+    await dialog_manager.start(MySG.main, mode=StartMode.RESET_STACK)
+
+
 if __name__ == '__main__':
     executor.start_polling(dp, skip_updates=True)
-
-
