@@ -2,35 +2,35 @@
   "question_and_answers": {
       "1": {
             "C помощью какой функции (метода) в модуле <b>itertools</b> возможно последовательно перебирать элементы iterable-объекта бесконечно? Напишите название функции без скобок с учетом регистра":
-      [["count", "Сount"], "", "CAACAgIAAxkBAAEGxTxjlMb-pLJgyYqnz1Bv-kfOSOW9FQAC2gEAAj0N6ATbMbE9opCtRCsE"]
+      [["count", "Сount"], "", "CAACAgIAAxkBAAEGxTxjlMb-pLJgyYqnz1Bv-kfOSOW9FQAC2gEAAj0N6ATbMbE9opCtRCsE", "<b>Материал по теме:</b>\n\nМодуль itertools находится в стандартной библиотеке Python.\n\n<b>Модуль представляет следующие типы итераторов:</b>\n\n1) Бесконечные итераторы;\n2) Конечные итераторы;\n3) Комбинаторные генераторы.\n\nВозвращаемый объект также будет итератором.\n\n<b>Бесконечные итераторы:</b>\ncount(), cycle(), repeat()\n\n<b>Конечные итераторы:</b>\naccumulate(), chain(), compress()\n\n<b>Комбинаторные генераторы:</b>\nproduct(), permutations(), combinations()"]
       },
       "2": {
             "Назовите шаблоны проектирования, относящиеся к группе порождающих:\n\n1) Фабричный метод;\n2) Фасад;\n3) Строитель;\n4) Одиночка;\n5) Декоратор;":
-      [["фабричныйметод,строитель,одиночка", "фабричныйметод,одиночка,строитель", "строитель,фабричныйметод,одиночка", "строитель,одиночка,фабричныйметод", "одиночка,фабричныйметод,строитель", "одиночка,строитель,фабричныйметод", "Фабричный метод, строитель, одиночка"], "", "CAACAgIAAxkBAAEGxT5jlMcTDAABYtDTCnPSO1nXAAHTMAduAAIxAAMoD2oU0_-9BQzWckgrBA"]
+      [["фабричныйметод,строитель,одиночка", "фабричныйметод,одиночка,строитель", "строитель,фабричныйметод,одиночка", "строитель,одиночка,фабричныйметод", "одиночка,фабричныйметод,строитель", "одиночка,строитель,фабричныйметод", "Фабричный метод, строитель, одиночка"], "", "CAACAgIAAxkBAAEGxT5jlMcTDAABYtDTCnPSO1nXAAHTMAduAAIxAAMoD2oU0_-9BQzWckgrBA","<b>Материал по теме:</b>\n\nВсего существует 23 классических паттерна, которые были описаны в книге «Банды четырех». В зависимости от того, какие задачи они решают, делятся на порождающие, структурные и поведенческие. Порождающие паттерны (или шаблоны) проектирования помогают решать задачи, связанные с созданием сущностей или групп похожих сущностей. Они убирают дублирование кода и делают процесс создания объектов короче и прямолинейнее.\n\n<b>К порождающим шаблонам можно отнести шесть:</b>\n\n1) Прототип (Prototype),\n2) Абстрактная фабрика (Abstract Factory),\n3) Фабричный метод (Factory Method),\n4) Строитель (Builder),\n5) Одиночка (Singleton),\n6) Ленивая инициализация (Lazy initialization)."]
       },
       "3": {
             "...класса - это функция, имплементированная внутри класса и имеющая следующий синтаксис":
-      [["конструктор", "Конструктор"], "assets/images/3.png", "CAACAgIAAxkBAAEGxUBjlMcvO6VAuRPJwwotMAABdMygmS8AAoAAAzDUnRGavqhB2EYDCysE"]
+      [["конструктор", "Конструктор"], "assets/images/3.png", "CAACAgIAAxkBAAEGxUBjlMcvO6VAuRPJwwotMAABdMygmS8AAoAAAzDUnRGavqhB2EYDCysE", "<b>Подсказка к ответу:</b>\n\nПервая буква в ответе - <b>К</b>"]
       },
       "4": {
             "Как называется одним словом конструкция, примененная к функции <b>foo</b>, описанной выше":
-      [["декоратор","Декоратор"], "assets/images/4.png", "CAACAgIAAxkBAAEGxUJjlMdGKW6oHb-OJY4s2JX-2EYglAACRgADUomRI_j-5eQK1QodKwQ"]
+      [["декоратор","Декоратор"], "assets/images/4.png", "CAACAgIAAxkBAAEGxUJjlMdGKW6oHb-OJY4s2JX-2EYglAACRgADUomRI_j-5eQK1QodKwQ", "<b>Подсказка к ответу:</b>\n\nПервая буква в ответе - <b>Д</b>"]
       },
       "5": {
             "Для создания связанного метода класса при его объявлении первым аргументом должен быть аргумент с названием …":
-      [["self"], "", "CAACAgIAAxkBAAEGxURjlMdZiu4rthFSXSSPtC6k0LCQrwACDgAD6dgTKBOmPUNf-EgfKwQ"]
+      [["self"], "", "CAACAgIAAxkBAAEGxURjlMdZiu4rthFSXSSPtC6k0LCQrwACDgAD6dgTKBOmPUNf-EgfKwQ", "<b>Подсказка к ответу:</b>\n\nПервая буква в ответе - <b>s</b>"]
       },
       "6": {
             "Какой тип исключения должен подниматься в ситуации, когда итератор исчерпан (следующего по порядку элемента итератора нет)?":
-      [["stopiteration", "StopIteration"], "", "CAACAgIAAxkBAAEGxUZjlMdrfbqe4kp1QZ8_pGHcZOkFJQACYwADbMpfCjwmYa-5TRYzKwQ"]
+      [["stopiteration", "StopIteration"], "", "CAACAgIAAxkBAAEGxUZjlMdrfbqe4kp1QZ8_pGHcZOkFJQACYwADbMpfCjwmYa-5TRYzKwQ", "<b>Подсказка к ответу:</b>\n\nПервая буква в ответе - <b>S</b>"]
       },
       "7": {
         "Как одним словом называется экземпляр класса, который реализует два метода <b>__iter__</b> и <b>__next__</b>":
-        [["итератор", "Итератор"], "", "CAACAgIAAxkBAAEGxUhjlMd_donu1vRppeTiczclwq5AKgACJgMAArVx2gY-GQuL5xwZQCsE"]
+        [["итератор", "Итератор"], "", "CAACAgIAAxkBAAEGxUhjlMd_donu1vRppeTiczclwq5AKgACJgMAArVx2gY-GQuL5xwZQCsE", "<b>Подсказка к ответу:</b>\n\nПервая буква в ответе - <b>И</b>"]
       },
       "8": {
         "Шаблон проектирования, код которого представлен выше, относится к группе … шаблонов, задача которых - повлиять на процесс создания объектов":
-        [["cинглтон", "Синглтон"], "assets/images/8.png", "AACAgIAAxkBAAEGxQ9jlL1TbCejEuqcx3y-I23psIsWzwACTgADrWW8FCFszl8rK9s8KwQ"]
+        [["cинглтон", "Синглтон"], "assets/images/8.png", "AACAgIAAxkBAAEGxQ9jlL1TbCejEuqcx3y-I23psIsWzwACTgADrWW8FCFszl8rK9s8KwQ", "<b>Подсказка к ответу:</b>\n\nПервая буква в ответе - <b>C</b>"]
       }
   }
 }
