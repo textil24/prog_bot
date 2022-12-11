@@ -56,8 +56,12 @@ class PsgQuestion(StatesGroup):
     question = State()
 
 
+class States(StatesGroup):
+    b = State()
+
+
 @dp.message_handler(commands=["start"])
-async def start(message: Message, dialog_manager: DialogManager):
+async def start(message: Message, ):
     global user_id
     user_id = message.from_user.id
     global text
@@ -67,19 +71,34 @@ async def start(message: Message, dialog_manager: DialogManager):
 
 
 @dp.message_handler(state=PsgText.text)
-async def load_name(message: types.Message, state: FSMContext) -> None:
+async def load_name(message: types.Message, dialog_manager: DialogManager, state: FSMContext) -> None:
     print(message.text)
     # await scheduler('16:29')
     await state.finish()
-    await scheduler(int(message.text))
+    await scheduler(message, dialog_manager, int(message.text))
 
 
-async def question_test():
+async def scheduler(message: types.Message, dialog_manager: DialogManager, time):
+    # aioschedule.every().day.at(time).do(do_get)
+    aioschedule.every(time).seconds.do(lambda: question_test(message, dialog_manager))
+
+    while True:
+        await aioschedule.run_pending()
+        await asyncio.sleep(time)
+        end_script = text
+        if end_script == '/secretend':
+            end_script = ''
+            break
+
+
+async def question_test(message: Message, dialog_manager: DialogManager):
     global id
-    id = random.randint(0, len(keys) - 1)
-
-    if photo := questions_and_answers[keys[id]][1]:
-        print('Я работаю')
+    mylist = range(len(keys))
+    id = next(iter(mylist))
+    if id == 0:
+        print("first question send")
+        await dialog_manager.start(States.b, mode=StartMode.RESET_STACK)
+    elif photo := questions_and_answers[keys[id]][1]:
         photo_init = open(photo, 'rb')
         await bot.send_photo(user_id, photo_init, caption=keys[id], parse_mode='html')
         await PsgQuestion.next()
@@ -119,20 +138,6 @@ async def load_name(message: types.Message, state: FSMContext) -> None:
             await message.answer('<b>Неправильный ответ! Попробуйте снова...</b>', parse_mode='html')
 
 
-async def scheduler(time):
-    # aioschedule.every().day.at(time).do(do_get)
-    aioschedule.every(time).seconds.do(question_test)
-
-    while True:
-        print('Отработал!')
-        await aioschedule.run_pending()
-        await asyncio.sleep(time)
-        end_script = text
-        if end_script == '/secretend':
-            end_script = ''
-            break
-
-
 async def get_data(**kwargs):
     answers = [
         ("Фабричный метод", '1'),
@@ -148,32 +153,31 @@ async def get_data(**kwargs):
 
 
 async def selected_buttons(c: CallbackQuery, multiselect_adapter: ManagedWidgetAdapter,
-                              dialog_manager: DialogManager, item_id: str):
+                           dialog_manager: DialogManager, item_id: str):
     print("Filter changed: ", item_id)
 
 
 column = Column(
     Multiselect(
-            Format("✓ {item[0]}"),
-            Format("{item[0]}"),
-            id="m_fruits",
-            item_id_getter=operator.itemgetter(1),
-            items="answers",
-            on_state_changed=selected_buttons,
-        )
+        Format("✓ {item[0]}"),
+        Format("{item[0]}"),
+        id="m_fruits",
+        item_id_getter=operator.itemgetter(1),
+        items="answers",
+        on_state_changed=selected_buttons,
+    )
 )
 
 dialog_questions = Dialog(
     Window(
         Const("Назовите шаблоны проектирования, относящиеся к группе порождающих:"),
         column,
-        state=PsgQuestion.question,
+        state=States.b,
         getter=get_data,
     )
 )
 
 registry.register(dialog_questions)
-
 
 if __name__ == '__main__':
     executor.start_polling(dp, skip_updates=True)
