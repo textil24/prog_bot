@@ -46,6 +46,7 @@ for quest in list_questions_answers:
     questions_and_answers[tuple(quest)[0]] = quest[tuple(quest)[0]]
 
 keys = list(questions_and_answers)
+id = 0
 
 
 class PsgText(StatesGroup):
@@ -62,6 +63,7 @@ class States(StatesGroup):
 
 @dp.message_handler(commands=["start"])
 async def start(message: Message, ):
+    global id
     global user_id
     user_id = message.from_user.id
     global text
@@ -93,18 +95,18 @@ async def scheduler(message: types.Message, dialog_manager: DialogManager, time)
 
 async def question_test(message: Message, dialog_manager: DialogManager):
     global id
-    mylist = range(len(keys))
-    id = next(iter(mylist))
-    if id == 0:
-        print("first question send")
-        await dialog_manager.start(States.b, mode=StartMode.RESET_STACK)
-    elif photo := questions_and_answers[keys[id]][1]:
-        photo_init = open(photo, 'rb')
-        await bot.send_photo(user_id, photo_init, caption=keys[id], parse_mode='html')
-        await PsgQuestion.next()
-    else:
-        await bot.send_message(user_id, keys[id], parse_mode='html')
-        await PsgQuestion.next()
+    while id < len(keys)-1:
+        if id == 0:
+            print("first question send")
+            await dialog_manager.start(States.b, mode=StartMode.RESET_STACK)
+        elif photo := questions_and_answers[keys[id]][1]:
+            photo_init = open(photo, 'rb')
+            await bot.send_photo(user_id, photo_init, caption=keys[id], parse_mode='html')
+            await PsgQuestion.next()
+        else:
+            await bot.send_message(user_id, keys[id], parse_mode='html')
+            await PsgQuestion.next()
+        id = id + 1
 
 
 @dp.message_handler(state=PsgQuestion.question)
