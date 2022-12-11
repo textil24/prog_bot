@@ -9,8 +9,9 @@ def get_kb() -> ReplyKeyboardMarkup:
 
     return kb
 
+
 def end_test_kb() -> ReplyKeyboardMarkup:
     kb = ReplyKeyboardMarkup(resize_keyboard=True)
-    kb.add(KeyboardButton('/end'))
+    kb.add(KeyboardButton('/stop'))
 
     return kb

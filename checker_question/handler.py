@@ -24,7 +24,7 @@ def handler(dp):
     async def cmd_create(message: types.Message) -> None:
         global id
         id = random.randint(0, len(keys) - 1)
-        await message.answer('<b>Внимание вопрос...</b>\n\nЕсли хотите закончить вопрос нажмите на кнопку - <b>/end</b>', parse_mode='html')
+        await message.answer('<b>Внимание вопрос...</b>', parse_mode='html')
         await message.answer('<b>Вопрос</b>\n\n' + keys[id], reply_markup=keyboards.end_test_kb(), parse_mode='html')
         await state.ProfileStatesGroup().question.set()
 
@@ -37,8 +37,8 @@ def handler(dp):
             await message.reply('<b>Правильный ответ!!!</b>', parse_mode='html')
             await message.answer('<b>Конец вопроса!!!</b>', reply_markup=keyboards.get_kb(), parse_mode='html')
             await state.finish()
-        elif message.text == '/end':
-            await message.answer('<b>Конец вопроса!!!</b>', reply_markup=keyboards.get_kb(), parse_mode='html')
+        elif message.text == '/stop':
+            await message.answer('<b>Бот остановлен</b>', reply_markup=keyboards.get_kb(), parse_mode='html')
             await state.finish()
         else:
             await message.answer('<b>Неправильный ответ!</b>', parse_mode='html')

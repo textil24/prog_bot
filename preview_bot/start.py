@@ -14,7 +14,7 @@ START = """Ответы на тест:
 """
 
 
-def start_command(dp):
-    @dp.message_handler(commands=['start'])
-    async def cmd_start(message: types.Message) -> None:
-        await message.answer(START, reply_markup=keyboards.get_kb(), parse_mode='html')
+# def start_command(dp):
+#     @dp.message_handler(commands=['start'])
+#     async def cmd_start(message: types.Message) -> None:
+#         await message.answer(START, reply_markup=keyboards.get_kb(), parse_mode='html')

@@ -1,4 +1,5 @@
 import asyncio
+import operator
 import random
 
 import aioschedule
@@ -8,6 +9,12 @@ from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.dispatcher import FSMContext
 
 import json
+
+from aiogram.types import Message, CallbackQuery
+from aiogram_dialog import DialogManager, StartMode, DialogRegistry, Dialog, Window
+from aiogram_dialog.widgets.kbd import SwitchTo, Multiselect, Column
+from aiogram_dialog.widgets.managed import ManagedWidgetAdapter
+from aiogram_dialog.widgets.text import Const, Format
 
 TOKEN_API = '5886107638:AAHuzhRErcTNw2RCnmHyF79BCXsxcvDo284'
 
@@ -19,7 +26,7 @@ storage = MemoryStorage()
 
 bot = Bot(TOKEN_API)
 dp = Dispatcher(bot, storage=storage)
-
+registry = DialogRegistry(dp)
 
 # keyboards.get_kb()
 
@@ -41,28 +48,27 @@ for quest in list_questions_answers:
 keys = list(questions_and_answers)
 
 
-class ProfileStatesGroup(StatesGroup):
-
+class PsgText(StatesGroup):
     text = State()
 
 
-class ProfileStatesGroup1(StatesGroup):
-
+class PsgQuestion(StatesGroup):
     question = State()
 
 
-@dp.message_handler(commands=['start'])
-async def choose_your_dinner(message: types.Message):
+@dp.message_handler(commands=["start"])
+async def start(message: Message, dialog_manager: DialogManager):
     global user_id
     user_id = message.from_user.id
     global text
     text = message.text
     await bot.send_message(user_id, 'Введите время ( в секундах ) для получения вопроса:')
-    await ProfileStatesGroup.next()
+    await PsgText.next()
 
 
-@dp.message_handler(state=ProfileStatesGroup.text)
+@dp.message_handler(state=PsgText.text)
 async def load_name(message: types.Message, state: FSMContext) -> None:
+    print(message.text)
     # await scheduler('16:29')
     await state.finish()
     await scheduler(int(message.text))
@@ -76,23 +82,24 @@ async def question_test():
         print('Я работаю')
         photo_init = open(photo, 'rb')
         await bot.send_photo(user_id, photo_init, caption=keys[id], parse_mode='html')
-        # await bot.send_message(user_id,
-        #     text=f'Тра-та-та{hide_link(photo)}',
-        #     parse_mode='HTML'
-        # )
-        await ProfileStatesGroup1.next()
+        await PsgQuestion.next()
     else:
         await bot.send_message(user_id, keys[id], parse_mode='html')
-        await ProfileStatesGroup1.next()
+        await PsgQuestion.next()
 
-@dp.message_handler(state=ProfileStatesGroup1.question)
+
+@dp.message_handler(state=PsgQuestion.question)
 async def load_name(message: types.Message, state: FSMContext) -> None:
     if message.text.lower().replace(' ', '') in questions_and_answers[keys[id]][0]:
+        print(keys)
+        print(id)
         if message.text in questions_and_answers[keys[id]][0]:
             await message.answer('<b>Совершенно верно! Продолжай в том же духе...</b>', parse_mode='html')
             await bot.send_sticker(user_id, sticker=questions_and_answers[keys[id]][2])
         else:
-            await message.answer(f'<b>Это похоже на правильный ответ!</b> В следующий раз пишите: <b>{questions_and_answers[keys[id]][0][-1]}</b>', parse_mode='html')
+            await message.answer(
+                f'<b>Это похоже на правильный ответ!</b> В следующий раз пишите: <b>{questions_and_answers[keys[id]][0][-1]}</b>',
+                parse_mode='html')
             await bot.send_sticker(user_id, sticker=questions_and_answers[keys[id]][2])
     elif message.text == '/secretend':
         global text
@@ -125,51 +132,48 @@ async def scheduler(time):
             end_script = ''
             break
 
-# async def get_data(**kwargs):
-#     fruits = [
-#         ("Фабричный метод", '1'),
-#         ("Фасад", '2'),
-#         ("Строитель", '3'),
-#         ("Одиночка", '4'),
-#         ("Декоратор", '5'),
-#     ]
-#     return {
-#         "fruits": fruits,
-#         "count": len(fruits),
-#     }
-#
-#
-# async def bots_filter_changed(c: CallbackQuery, multiselect_adapter: ManagedWidgetAdapter,
-#                               dialog_manager: DialogManager, item_id: str):
-#     print("Filter changed: ", item_id)
-#
-#
-# fruits_kbd = Multiselect(
-#     Format("✓ {item[0]}"),
-#     Format("{item[0]}"),
-#     id="m_fruits",
-#     item_id_getter=operator.itemgetter(1),
-#     items="fruits",
-#     on_state_changed=bots_filter_changed,
-# )
-#
-# column = Column(
-#     fruits_kbd,
-# )
-#
-# main_window = Window(
-#     Const("Question"),
-#     column,
-#     state=MySG.main,
-#     getter=get_data,
-# )
-# dialog = Dialog(main_window)
-# registry.register(dialog)
-#
-#
-# @dp.message_handler(commands=["button"])
-# async def start(m: Message, dialog_manager: DialogManager):
-#     await dialog_manager.start(MySG.main, mode=StartMode.RESET_STACK)
+
+async def get_data(**kwargs):
+    answers = [
+        ("Фабричный метод", '1'),
+        ("Фасад", '2'),
+        ("Строитель", '3'),
+        ("Одиночка", '4'),
+        ("Декоратор", '5'),
+    ]
+    return {
+        "answers": answers,
+        "count": len(answers),
+    }
+
+
+async def selected_buttons(c: CallbackQuery, multiselect_adapter: ManagedWidgetAdapter,
+                              dialog_manager: DialogManager, item_id: str):
+    print("Filter changed: ", item_id)
+
+
+column = Column(
+    Multiselect(
+            Format("✓ {item[0]}"),
+            Format("{item[0]}"),
+            id="m_fruits",
+            item_id_getter=operator.itemgetter(1),
+            items="answers",
+            on_state_changed=selected_buttons,
+        )
+)
+
+dialog_questions = Dialog(
+    Window(
+        Const("Назовите шаблоны проектирования, относящиеся к группе порождающих:"),
+        column,
+        state=PsgQuestion.question,
+        getter=get_data,
+    )
+)
+
+registry.register(dialog_questions)
+
 
 if __name__ == '__main__':
     executor.start_polling(dp, skip_updates=True)
