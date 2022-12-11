@@ -95,10 +95,11 @@ async def scheduler(message: types.Message, dialog_manager: DialogManager, time)
 
 async def question_test(message: Message, dialog_manager: DialogManager):
     global id
-    while id < len(keys)-1:
+    if id < len(keys)-1:
         if id == 0:
             print("first question send")
             await dialog_manager.start(States.b, mode=StartMode.RESET_STACK)
+            await PsgQuestion.next()
         elif photo := questions_and_answers[keys[id]][1]:
             photo_init = open(photo, 'rb')
             await bot.send_photo(user_id, photo_init, caption=keys[id], parse_mode='html')
