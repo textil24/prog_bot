@@ -56,8 +56,7 @@ class PsgText(StatesGroup):
 class PsgQuestion(StatesGroup):
     question = State()
 
-
-class States(StatesGroup):
+class SelectState(StatesGroup):
     b = State()
 
 
@@ -96,11 +95,12 @@ async def scheduler(message: types.Message, dialog_manager: DialogManager, time)
 async def question_test(message: Message, dialog_manager: DialogManager):
     global id
     if id < len(keys)-1:
-        if id == 0:
-            print("first question send")
-            await dialog_manager.start(States.b, mode=StartMode.RESET_STACK)
-            await PsgQuestion.next()
-        elif photo := questions_and_answers[keys[id]][1]:
+        # if id == 0:
+        #     print("first question send")
+        #     await SelectState.b.set()
+        #     await dialog_manager.start(SelectState.b, reset_stack=True)
+        #     await PsgQuestion.next()
+        if photo := questions_and_answers[keys[id]][1]:
             photo_init = open(photo, 'rb')
             await bot.send_photo(user_id, photo_init, caption=keys[id], parse_mode='html')
             await PsgQuestion.next()
@@ -140,47 +140,47 @@ async def load_name(message: types.Message, state: FSMContext) -> None:
         else:
             await message.answer('<b>Неправильный ответ! Попробуйте снова...</b>', parse_mode='html')
 
-
-async def get_data(**kwargs):
-    answers = [
-        ("Фабричный метод", '1'),
-        ("Фасад", '2'),
-        ("Строитель", '3'),
-        ("Одиночка", '4'),
-        ("Декоратор", '5'),
-    ]
-    return {
-        "answers": answers,
-        "count": len(answers),
-    }
-
-
-async def selected_buttons(c: CallbackQuery, multiselect_adapter: ManagedWidgetAdapter,
-                           dialog_manager: DialogManager, item_id: str):
-    print("Filter changed: ", item_id)
-
-
-column = Column(
-    Multiselect(
-        Format("✓ {item[0]}"),
-        Format("{item[0]}"),
-        id="m_fruits",
-        item_id_getter=operator.itemgetter(1),
-        items="answers",
-        on_state_changed=selected_buttons,
-    )
-)
-
-dialog_questions = Dialog(
-    Window(
-        Const("Назовите шаблоны проектирования, относящиеся к группе порождающих:"),
-        column,
-        state=States.b,
-        getter=get_data,
-    )
-)
-
-registry.register(dialog_questions)
+#
+# async def get_data(**kwargs):
+#     answers = [
+#         ("Фабричный метод", '1'),
+#         ("Фасад", '2'),
+#         ("Строитель", '3'),
+#         ("Одиночка", '4'),
+#         ("Декоратор", '5'),
+#     ]
+#     return {
+#         "answers": answers,
+#         "count": len(answers),
+#     }
+#
+#
+# async def selected_buttons(c: CallbackQuery, multiselect_adapter: ManagedWidgetAdapter,
+#                            dialog_manager: DialogManager):
+#     print("Filter changed: ")
+#
+#
+# column = Column(
+#     Multiselect(
+#         Format("✓ {item[0]}"),
+#         Format("{item[0]}"),
+#         id="m_fruits",
+#         item_id_getter=operator.itemgetter(1),
+#         items="answers",
+#         on_state_changed=selected_buttons,
+#     )
+# )
+#
+# dialog_questions = Dialog(
+#     Window(
+#         Const("Назовите шаблоны проектирования, относящиеся к группе порождающих:"),
+#         column,
+#         state=SelectState.b,
+#         getter=get_data,
+#     )
+# )
+#
+# registry.register(dialog_questions)
 
 if __name__ == '__main__':
     executor.start_polling(dp, skip_updates=True)
