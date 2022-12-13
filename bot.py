@@ -56,6 +56,7 @@ class PsgText(StatesGroup):
 class PsgQuestion(StatesGroup):
     question = State()
 
+
 class SelectState(StatesGroup):
     b = State()
 
@@ -94,7 +95,7 @@ async def scheduler(message: types.Message, dialog_manager: DialogManager, time)
 
 async def question_test(message: Message, dialog_manager: DialogManager):
     global id
-    if id < len(keys)-1:
+    if id < len(keys) - 1:
         # if id == 0:
         #     print("first question send")
         #     await SelectState.b.set()
@@ -140,8 +141,11 @@ async def load_name(message: types.Message, state: FSMContext) -> None:
         else:
             await message.answer('<b>Неправильный ответ! Попробуйте снова...</b>', parse_mode='html')
 
-inline_btn_3 = InlineKeyboardButton('кнопка 3', callback_data='btn3')
-inline_btn_4 = InlineKeyboardButton('кнопка 4', callback_data='btn4')
+
+@dp.callback_query_handler(func=lambda c: c.data and c.data.startswith('btn'))
+async def process_callback_kb1btn1(callback_query: types.CallbackQuery):
+    code = callback_query.data[-1]
+
 
 if __name__ == '__main__':
     executor.start_polling(dp, skip_updates=True)
