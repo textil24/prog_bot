@@ -10,7 +10,7 @@ from aiogram.dispatcher import FSMContext
 
 import json
 
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message, CallbackQuery, InlineKeyboardButton
 from aiogram_dialog import DialogManager, StartMode, DialogRegistry, Dialog, Window
 from aiogram_dialog.widgets.kbd import SwitchTo, Multiselect, Column
 from aiogram_dialog.widgets.managed import ManagedWidgetAdapter
@@ -140,47 +140,8 @@ async def load_name(message: types.Message, state: FSMContext) -> None:
         else:
             await message.answer('<b>Неправильный ответ! Попробуйте снова...</b>', parse_mode='html')
 
-#
-# async def get_data(**kwargs):
-#     answers = [
-#         ("Фабричный метод", '1'),
-#         ("Фасад", '2'),
-#         ("Строитель", '3'),
-#         ("Одиночка", '4'),
-#         ("Декоратор", '5'),
-#     ]
-#     return {
-#         "answers": answers,
-#         "count": len(answers),
-#     }
-#
-#
-# async def selected_buttons(c: CallbackQuery, multiselect_adapter: ManagedWidgetAdapter,
-#                            dialog_manager: DialogManager):
-#     print("Filter changed: ")
-#
-#
-# column = Column(
-#     Multiselect(
-#         Format("✓ {item[0]}"),
-#         Format("{item[0]}"),
-#         id="m_fruits",
-#         item_id_getter=operator.itemgetter(1),
-#         items="answers",
-#         on_state_changed=selected_buttons,
-#     )
-# )
-#
-# dialog_questions = Dialog(
-#     Window(
-#         Const("Назовите шаблоны проектирования, относящиеся к группе порождающих:"),
-#         column,
-#         state=SelectState.b,
-#         getter=get_data,
-#     )
-# )
-#
-# registry.register(dialog_questions)
+inline_btn_3 = InlineKeyboardButton('кнопка 3', callback_data='btn3')
+inline_btn_4 = InlineKeyboardButton('кнопка 4', callback_data='btn4')
 
 if __name__ == '__main__':
     executor.start_polling(dp, skip_updates=True)
