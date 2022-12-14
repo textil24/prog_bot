@@ -19,7 +19,7 @@ def end_test_kb() -> ReplyKeyboardMarkup:
 
 def level_kb() -> InlineKeyboardMarkup:
     inline_kb_full = InlineKeyboardMarkup(row_width=2)
-    inline_btn_3 = InlineKeyboardButton('Easy (1 вопрос)', callback_data='btn3')
-    inline_btn_4 = InlineKeyboardButton('Hard (3 вопроса)', callback_data='btn4')
+    inline_btn_3 = InlineKeyboardButton('Easy (1 вопрос)', callback_data='btn1')
+    inline_btn_4 = InlineKeyboardButton('Hard (3 вопроса)', callback_data='btn2')
     inline_kb_full.row(inline_btn_3, inline_btn_4)
     return inline_kb_full

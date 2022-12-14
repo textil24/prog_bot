@@ -12,6 +12,8 @@ import json
 from aiogram.types import Message, CallbackQuery, InlineKeyboardButton
 from aiogram_dialog import DialogManager, StartMode, DialogRegistry, Dialog, Window
 
+from keyboards import keyboards
+
 TOKEN_API = '1670961232:AAGt74keHH_CeyGOi9lxe1FEMNi9-8JBcis'
 
 user_id = ''
@@ -24,13 +26,6 @@ bot = Bot(TOKEN_API)
 dp = Dispatcher(bot, storage=storage)
 registry = DialogRegistry(dp)
 
-# keyboards.get_kb()
-
-# start.start_command(dp)
-# help.help_command(dp)
-
-# handler.handler(dp)
-# handlers.handlers(dp)
 
 BEFORE_STOP_BOT = "Бот остановлен"
 CORRECT_ANSWER = '<b>Совершенно верно! Продолжай в том же духе!</b>'
@@ -64,8 +59,8 @@ class PsgQuestion(StatesGroup):
     question = State()
 
 
-class SelectState(StatesGroup):
-    b = State()
+class LevelState(StatesGroup):
+    level = State()
 
 
 @dp.message_handler(commands=["start"])
@@ -74,8 +69,14 @@ async def start(message: Message):
     user_id = message.from_user.id
     global text
     text = message.text
-    await bot.send_message(user_id, 'Введите время ( в секундах ) для получения вопроса:')
+    await bot.send_message(user_id, 'Введите время (в секундах) для получения вопроса:')
     await PsgText.next()
+
+
+#
+# @dp.message_handler(state=LevelState.level)
+# async def select_level(message: types.Message, state: FSMContext) -> None:
+#     await message.reply("Выбери уровень: ", reply_markup=keyboards.get_kb())
 
 
 @dp.message_handler(state=PsgText.text)
@@ -83,7 +84,13 @@ async def load_name(message: types.Message, state: FSMContext) -> None:
     print(message.text)
     # await scheduler('16:29')
     await state.finish()
+    await message.reply("Теперь выбери уровень (количество вопросов в день): ", reply_markup=keyboards.level_kb())
     await scheduler(int(message.text))
+
+
+@dp.callback_query_handler(text='btn1')
+async def process_callback_button1(call: types.CallbackQuery):
+    await call.message.answer("first")
 
 
 @dp.message_handler(commands=["theory"])
