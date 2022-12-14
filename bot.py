@@ -88,8 +88,8 @@ async def load_name(message: types.Message, state: FSMContext) -> None:
 
 @dp.message_handler(commands=["theory"])
 async def send_theory(message: types.Message):
-    photo = open('media/{}'.format(question_number), 'rb')
-    await bot.send_photo(user_id, photo, caption=keys[question_number], parse_mode='html')
+    photo = open('media/{}.jpg'.format(question_number+1), 'rb')
+    await bot.send_photo(user_id, photo, parse_mode='html')
 
 
 async def scheduler(time):
@@ -125,6 +125,8 @@ async def load_name(message: types.Message, state: FSMContext) -> None:
     if user_answer in answers[question_number]:
         await message.answer(CORRECT_ANSWER, parse_mode='html')
         await bot.send_sticker(user_id, sticker=questions_and_answers[keys[question_number]][2])
+    elif user_answer == '/theory':
+        await send_theory(message)
     else:
         await message.answer(WRONG_ANSWER, parse_mode='html')
 
