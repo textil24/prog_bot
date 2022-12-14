@@ -69,22 +69,22 @@ async def start(message: Message):
 
 
 @dp.message_handler(state=PsgText.text)
-async def load_name(message: types.Message, dialog_manager: DialogManager, state: FSMContext) -> None:
+async def load_name(message: types.Message, state: FSMContext) -> None:
     print(message.text)
     # await scheduler('16:29')
     await state.finish()
-    await scheduler(message, dialog_manager, int(message.text))
+    await scheduler(int(message.text))
 
 
-@dp.message_handler(commands=["/theory"])
+@dp.message_handler(commands=["theory"])
 async def send_theory(message: types.Message):
     photo = open('media/{}'.format(question_number), 'rb')
     await bot.send_photo(user_id, photo, caption=keys[question_number], parse_mode='html')
 
 
-async def scheduler(message: types.Message, dialog_manager: DialogManager, time):
-    # aioschedule.every().day.at(time).do(do_get)
-   # aioschedule.every(time).seconds.do()
+async def scheduler(time):
+   #aioschedule.every().day.at(time).do(do_get)
+    aioschedule.every(time).seconds.do(send_question_test)
 
     while True:
         await aioschedule.run_pending()
@@ -95,8 +95,10 @@ async def scheduler(message: types.Message, dialog_manager: DialogManager, time)
             break
 
 
-async def question_test():
+async def send_question_test():
     global question_number
+    print("question number {}".format(question_number))
+    print(keys)
     if question_number < len(keys) - 1:
         if photo := questions_and_answers[keys[question_number]][1]:
             photo_init = open(photo, 'rb')
@@ -110,16 +112,13 @@ async def question_test():
 
 @dp.message_handler(state=PsgQuestion.question)
 async def load_name(message: types.Message, state: FSMContext) -> None:
-    if message.text.lower().replace(' ', '') in questions_and_answers[keys[id]][0]:
+    if message.text.lower().replace(' ', '') in questions_and_answers[keys[question_number]][0]:
         await message.answer('<b>Совершенно верно! Продолжай в том же духе...</b>', parse_mode='html')
-        await bot.send_sticker(user_id, sticker=questions_and_answers[keys[id]][2])
+        await bot.send_sticker(user_id, sticker=questions_and_answers[keys[question_number]][2])
     else:
         await message.answer('<b>Неправильный ответ! Попробуйте снова...</b>', parse_mode='html')
 
 
 if __name__ == '__main__':
     executor.start_polling(dp, skip_updates=True)
-    try:
-        executor.start_polling(dp)
-    except:
-        os._exit(0)
+
