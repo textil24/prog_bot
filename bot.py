@@ -1,6 +1,5 @@
 import asyncio
-import operator
-import random
+import os
 
 import aioschedule
 from aiogram import Bot, Dispatcher, executor, types
@@ -13,8 +12,7 @@ import json
 from aiogram.types import Message, CallbackQuery, InlineKeyboardButton
 from aiogram_dialog import DialogManager, StartMode, DialogRegistry, Dialog, Window
 
-
-TOKEN_API = '5886107638:AAHuzhRErcTNw2RCnmHyF79BCXsxcvDo284'
+TOKEN_API = '1670961232:AAGt74keHH_CeyGOi9lxe1FEMNi9-8JBcis'
 
 user_id = ''
 text = ''
@@ -37,7 +35,6 @@ registry = DialogRegistry(dp)
 BEFORE_STOP_BOT = "Бот остановлен"
 question_number = 0
 
-
 with open("checker_tests/data/questions_and_answers.json", encoding='utf-8') as file:
     src = json.load(file)
 
@@ -47,7 +44,6 @@ for quest in list_questions_answers:
     questions_and_answers[tuple(quest)[0]] = quest[tuple(quest)[0]]
 
 keys = list(questions_and_answers)
-id = 0
 
 
 class PsgText(StatesGroup):
@@ -82,12 +78,13 @@ async def load_name(message: types.Message, dialog_manager: DialogManager, state
 
 @dp.message_handler(commands=["/theory"])
 async def send_theory(message: types.Message):
-    await message.answer("Hello, <b>world</b>!", parse_mode="HTML")
+    photo = open('media/{}'.format(question_number), 'rb')
+    await bot.send_photo(user_id, photo, caption=keys[question_number], parse_mode='html')
 
 
 async def scheduler(message: types.Message, dialog_manager: DialogManager, time):
     # aioschedule.every().day.at(time).do(do_get)
-    aioschedule.every(time).seconds.do(lambda: question_test(message, dialog_manager))
+   # aioschedule.every(time).seconds.do()
 
     while True:
         await aioschedule.run_pending()
@@ -116,27 +113,13 @@ async def load_name(message: types.Message, state: FSMContext) -> None:
     if message.text.lower().replace(' ', '') in questions_and_answers[keys[id]][0]:
         await message.answer('<b>Совершенно верно! Продолжай в том же духе...</b>', parse_mode='html')
         await bot.send_sticker(user_id, sticker=questions_and_answers[keys[id]][2])
-    # elif message.text == '/stop':
-    #     global text
-    #     text = message.text
-    #     await message.answer(BEFORE_STOP_BOT, parse_mode='html')
-    #     await state.finish()
     else:
-        # global count
-        # count += 1
-        # if count in [3, 4]:
-        #     await message.answer(questions_and_answers[keys[id]][3], parse_mode='html')
-        # elif count in [5]:
-        #     await message.answer('<b>Неправильный ответ! Попробуйте снова...</b>', parse_mode='html')
-        #     count = 0
-        # else:
-            await message.answer('<b>Неправильный ответ! Попробуйте снова...</b>', parse_mode='html')
-
-
-@dp.callback_query_handler(func=lambda c: c.data and c.data.startswith('btn'))
-async def process_callback_kb1btn1(callback_query: types.CallbackQuery):
-    code = callback_query.data[-1]
+        await message.answer('<b>Неправильный ответ! Попробуйте снова...</b>', parse_mode='html')
 
 
 if __name__ == '__main__':
     executor.start_polling(dp, skip_updates=True)
+    try:
+        executor.start_polling(dp)
+    except:
+        os._exit(0)
