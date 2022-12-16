@@ -26,11 +26,12 @@ bot = Bot(TOKEN_API)
 dp = Dispatcher(bot, storage=storage)
 registry = DialogRegistry(dp)
 
-
 BEFORE_STOP_BOT = "Бот остановлен"
 CORRECT_ANSWER = '<b>Совершенно верно! Продолжай в том же духе!</b>'
 WRONG_ANSWER = '<b>Неправильный ответ! Попробуйте снова...</b>'
+FIRST_BUTTON = "Поздравляю! Теперь ежедневно в {0} ты будешь получать 1 вопрос по питону :)"
 question_number = -1
+user_time = 0
 
 with open("checker_tests/data/questions_and_answers.json", encoding='utf-8') as file:
     src = json.load(file)
@@ -81,21 +82,23 @@ async def start(message: Message):
 
 @dp.message_handler(state=PsgText.text)
 async def load_name(message: types.Message, state: FSMContext) -> None:
-    print(message.text)
+    global user_time
+    user_time = message.text
     # await scheduler('16:29')
     await state.finish()
     await message.reply("Теперь выбери уровень (количество вопросов в день): ", reply_markup=keyboards.level_kb())
-    await scheduler(int(message.text))
 
 
 @dp.callback_query_handler(text='btn1')
 async def process_callback_button1(call: types.CallbackQuery):
-    await call.message.answer("first")
+    # await call.message.answer("first")
+    await bot.send_message(user_id, FIRST_BUTTON.format(user_time))
+    await scheduler(int(user_time))
 
 
 @dp.message_handler(commands=["theory"])
 async def send_theory(message: types.Message):
-    photo = open('media/{}.jpg'.format(question_number+1), 'rb')
+    photo = open('media/{}.jpg'.format(question_number + 1), 'rb')
     await bot.send_photo(user_id, photo, parse_mode='html')
 
 
