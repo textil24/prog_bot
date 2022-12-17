@@ -19,7 +19,7 @@ def handlers(dp):
     list_questions_answers = [src['question_and_answers'][item] for item in src['question_and_answers']]
     questions_and_answers = {}
     answers = [["134", "143", "341", "431", "314", "413"],
-               ["count", "Сount"],
+               ["count", "Сount", 'count()', 'Count()'],
                ["конструктор", "Конструктор"],
                ["декоратор", "Декоратор"],
                ["self", "Self"],
@@ -81,8 +81,8 @@ def handlers(dp):
 
     @dp.message_handler(commands=["hint"])
     async def send_hint(message: Message):
-       # await bot.send_message(user_id, hints[question_number])
-        await message.answer(hints[question_number])
+        await bot.send_message(user_id, hints[question_number])
+       # await message.answer(hints[question_number])
 
     async def scheduler(time):
         # aioschedule.every().day.at(time).do(do_get)
@@ -101,21 +101,24 @@ def handlers(dp):
         global question_number
         question_number += 1
         print("question number {}".format(question_number))
-        if question_number < len(keys) - 1:
+        if question_number < len(keys):
             if photo := questions_and_answers[keys[question_number]][1]:
                 photo_init = open(photo, 'rb')
                 await bot.send_photo(user_id, photo_init, caption=keys[question_number], parse_mode='html', reply_markup=keyboards.menu_kb())
                 await states.PsgQuestion.next()
             else:
                 await bot.send_message(user_id, keys[question_number], parse_mode='html', reply_markup=keyboards.menu_kb())
+                print("test")
                 await states.PsgQuestion.next()
 
     @dp.message_handler(state=states.PsgQuestion.question)
     async def user_answer(message: types.Message, state: FSMContext) -> None:
+        print("send answer")
         user_answer = message.text.lower().replace(' ', '')
         global is_user_answered
         if user_answer in answers[question_number]:
             is_user_answered = True
+            print("true")
             await message.answer(CORRECT_ANSWER, parse_mode='html')
             await bot.send_sticker(user_id, sticker=questions_and_answers[keys[question_number]][2])
         elif user_answer == '/theory':
