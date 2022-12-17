@@ -81,7 +81,8 @@ def handlers(dp):
 
     @dp.message_handler(commands=["hint"])
     async def send_hint(message: Message):
-        await bot.send_message(user_id, hints[question_number])
+       # await bot.send_message(user_id, hints[question_number])
+        await message.answer(hints[question_number])
 
     async def scheduler(time):
         # aioschedule.every().day.at(time).do(do_get)
