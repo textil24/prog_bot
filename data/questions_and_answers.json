@@ -10,11 +10,11 @@
       },
       "3": {
             "...класса - это функция, имплементированная внутри класса и имеющая синтаксис, представленный на картинке":
-      [["конструктор", "Конструктор"], "assets/images/3.png", "CAACAgIAAxkBAAEGxUBjlMcvO6VAuRPJwwotMAABdMygmS8AAoAAAzDUnRGavqhB2EYDCysE", "<b>Подсказка к ответу:</b>\n\nПервая буква в ответе - <b>К</b>"]
+      [["конструктор", "Конструктор"], "media/images/3.png", "CAACAgIAAxkBAAEGxUBjlMcvO6VAuRPJwwotMAABdMygmS8AAoAAAzDUnRGavqhB2EYDCysE", "<b>Подсказка к ответу:</b>\n\nПервая буква в ответе - <b>К</b>"]
       },
       "4": {
             "Как называется одним словом конструкция, примененная к функции <b>foo</b> на картинке выше":
-      [["декоратор","Декоратор"], "assets/images/4.png", "CAACAgIAAxkBAAEGxUJjlMdGKW6oHb-OJY4s2JX-2EYglAACRgADUomRI_j-5eQK1QodKwQ", "<b>Подсказка к ответу:</b>\n\nПервая буква в ответе - <b>Д</b>"]
+      [["декоратор","Декоратор"], "media/images/4.png", "CAACAgIAAxkBAAEGxUJjlMdGKW6oHb-OJY4s2JX-2EYglAACRgADUomRI_j-5eQK1QodKwQ", "<b>Подсказка к ответу:</b>\n\nПервая буква в ответе - <b>Д</b>"]
       },
       "5": {
             "Для создания связанного метода класса при его объявлении первым аргументом должен быть аргумент с названием …":
@@ -30,7 +30,7 @@
       },
       "8": {
         "Шаблон проектирования, код которого представлен выше, относится к группе … шаблонов, задача которых - повлиять на процесс создания объектов":
-        [["cинглтон", "Синглтон"], "assets/images/8.png", "AACAgIAAxkBAAEGxQ9jlL1TbCejEuqcx3y-I23psIsWzwACTgADrWW8FCFszl8rK9s8KwQ", "<b>Подсказка к ответу:</b>\n\nПервая буква в ответе - <b>C</b>"]
+        [["cинглтон", "Синглтон"], "media/images/8.png", "AACAgIAAxkBAAEGxQ9jlL1TbCejEuqcx3y-I23psIsWzwACTgADrWW8FCFszl8rK9s8KwQ", "<b>Подсказка к ответу:</b>\n\nПервая буква в ответе - <b>C</b>"]
       }
   }
 }

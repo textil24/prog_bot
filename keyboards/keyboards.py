@@ -1,13 +1,16 @@
+from aiogram import types
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup
 
 
-def get_kb() -> ReplyKeyboardMarkup:
-    kb = ReplyKeyboardMarkup(resize_keyboard=True)
-    kb.add(KeyboardButton('/test'))
-    kb.add(KeyboardButton('/question'))
-    kb.add(KeyboardButton('/help'))
-
-    return kb
+def menu_kb() -> ReplyKeyboardMarkup:
+    kb = [
+        [
+            types.KeyboardButton(text="/hint"),
+            types.KeyboardButton(text="/theory")
+        ],
+    ]
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, keyboard=kb, one_time_keyboard=True)
+    return keyboard
 
 
 def end_test_kb() -> ReplyKeyboardMarkup:
