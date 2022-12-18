@@ -65,7 +65,6 @@ def handlers(dp):
     async def get_level(message: types.Message, state: FSMContext) -> None:
         global user_time
         global total_seconds
-       # user_time = int(message.text)
         user_time = message.text
         pt = datetime.strptime(user_time, '%H:%M')
         total_seconds = pt.minute*60 + pt.hour*3600
@@ -92,9 +91,9 @@ def handlers(dp):
        # await message.answer(hints[question_number])
 
     async def scheduler(time):
-        # aioschedule.every().day.at(time).do(do_get)
-        aioschedule.every(time).seconds.do(send_question_test)
-        # aioschedule.every(time+12).seconds.do(check_user_answered)
+        aioschedule.every().day.at(time).do(send_question_test)
+        # aioschedule.every(time).seconds.do(send_question_test)
+        aioschedule.every().day.at(time+43200).do(check_user_answered)
 
         while True:
             await aioschedule.run_pending()
