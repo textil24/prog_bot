@@ -1,4 +1,5 @@
 import asyncio
+from datetime import datetime
 
 import aioschedule
 from aiogram import types
@@ -49,13 +50,13 @@ def handlers(dp):
         global m
         m = message
         text = message.text
-        await message.reply('Как пользоваться этим ботом: '
-                            'необходимо выбрать время, затем уровень.'
+        await message.reply('<b>Как пользоваться этим ботом: </b>'
+                            'необходимо выбрать время, затем уровень. '
                             'Обратите внимание, что поменять в дальнейшем эти значения не получится. '
                             'После того как тебе придет вопрос можно воспользоваться командой /hint для '
                             'получения подсказки по вопросу и командой /theory для развернутой теории по '
                             'теме вопроса. Если ты забудешь прислать верный ответ, '
-                            'то бот через 12 часов тебе об этом напомнит.')
+                            'то бот через 12 часов тебе об этом напомнит.', parse_mode='html')
         await asyncio.sleep(5)
         await bot.send_message(user_id, 'Введите время (например 17:05) для получения ежедневных уведомлений:')
         await states.PsgText.next()
@@ -63,14 +64,18 @@ def handlers(dp):
     @dp.message_handler(state=states.PsgText.text)
     async def get_level(message: types.Message, state: FSMContext) -> None:
         global user_time
-        user_time = int(message.text)
+        global total_seconds
+       # user_time = int(message.text)
+        user_time = message.text
+        pt = datetime.strptime(user_time, '%H:%M')
+        total_seconds = pt.minute*60 + pt.hour*3600
         await state.finish()
         await message.reply("Теперь выбери уровень (количество вопросов в день): ", reply_markup=keyboards.level_kb())
 
     @dp.callback_query_handler(text='btn1')
     async def process_callback_button1(call: types.CallbackQuery):
         await bot.send_message(user_id, FIRST_BUTTON.format(user_time))
-        await scheduler(user_time)
+        await scheduler(total_seconds)
 
     @dp.callback_query_handler(text='btn2')
     async def process_callback_button2(call: types.CallbackQuery):
@@ -102,24 +107,20 @@ def handlers(dp):
     async def send_question_test():
         global question_number
         question_number += 1
-        print("question number {}".format(question_number))
         if question_number < len(keys):
             if photo := questions_and_answers[keys[question_number]][1]:
                 photo_init = open(photo, 'rb')
                 await bot.send_photo(user_id, photo_init, caption=keys[question_number], parse_mode='html', reply_markup=keyboards.menu_kb())
             else:
                 await bot.send_message(user_id, keys[question_number], parse_mode='html', reply_markup=keyboards.menu_kb())
-                print("test")
             await states.PsgQuestion.question.set()
 
     @dp.message_handler(state=states.PsgQuestion.question)
     async def user_answer(message: types.Message, state: FSMContext) -> None:
-        print("send answer")
         user_answer = message.text.lower().replace(' ', '')
         global is_user_answered
         if user_answer in answers[question_number]:
             is_user_answered = True
-            print("true")
             await message.answer(CORRECT_ANSWER, parse_mode='html')
             await bot.send_sticker(user_id, sticker=questions_and_answers[keys[question_number]][2])
         elif user_answer == '/theory':
