@@ -45,8 +45,10 @@ def handlers(dp):
     async def start(message: Message):
         global user_id
         user_id = message.from_user.id
+        global text
         global m
         m = message
+        text = message.text
         await message.reply('Как пользоваться этим ботом: '
                             'необходимо выбрать время, затем уровень.'
                             'Обратите внимание, что поменять в дальнейшем эти значения не получится. '
