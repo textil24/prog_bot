@@ -3,7 +3,7 @@ import asyncio
 import aioschedule
 from aiogram import types
 from aiogram.dispatcher import FSMContext
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message
 
 from data.values import *
 from . import states
@@ -29,10 +29,10 @@ def handlers(dp):
 
     hints = ['надо выбрать три номера',
              "первая буква 'c'",
+             "первая буква 'к'",
              "первая буква 'д'",
              "первая буква 's'",
              "первая часть слова: 'stop'",
-             "первая буква 's'",
              "первая буква 'и'",
              "первая буква 'c'"]
 
@@ -107,11 +107,10 @@ def handlers(dp):
             if photo := questions_and_answers[keys[question_number]][1]:
                 photo_init = open(photo, 'rb')
                 await bot.send_photo(user_id, photo_init, caption=keys[question_number], parse_mode='html', reply_markup=keyboards.menu_kb())
-                await states.PsgQuestion.next()
             else:
                 await bot.send_message(user_id, keys[question_number], parse_mode='html', reply_markup=keyboards.menu_kb())
                 print("test")
-                await states.PsgQuestion.next()
+            await states.PsgQuestion.question.set()
 
     @dp.message_handler(state=states.PsgQuestion.question)
     async def user_answer(message: types.Message, state: FSMContext) -> None:
