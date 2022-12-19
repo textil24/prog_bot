@@ -2,9 +2,9 @@ import asyncio
 from datetime import datetime
 
 import aioschedule
-from aiogram import types
+import aiogram.utils.markdown as md
 from aiogram.dispatcher import FSMContext
-from aiogram.types import Message
+from aiogram.types import Message, ParseMode
 
 from data.values import *
 from . import states
@@ -50,13 +50,14 @@ def handlers(dp):
         global m
         m = message
         text = message.text
-        await message.reply('<b>Как пользоваться этим ботом: </b>'
-                            'необходимо выбрать время, затем уровень. '
-                            'Обратите внимание, что поменять в дальнейшем эти значения не получится. '
-                            'После того как тебе придет вопрос можно воспользоваться командой /hint для '
-                            'получения подсказки по вопросу и командой /theory для развернутой теории по '
-                            'теме вопроса. Если ты забудешь прислать верный ответ, '
-                            'то бот через 12 часов тебе об этом напомнит.', parse_mode='html')
+        await message.reply(
+            f'<b>Как пользоваться этим ботом: </b>\n\n' +
+            md.text('\u25AA выбери время для ежедневных уведомлений', '\u25AA выбери уровень', sep='\n') +
+            f'\n\n<i>Обрати внимание, что поменять в дальнейшем эти значения не получится. </i>\n' +
+            'После того как тебе придет вопрос можно воспользоваться командой /hint для'
+            f'получения подсказки по вопросу и командой /theory для развернутой теории по теме вопроса.\n\n' +
+            f'Если ты забудешь прислать верный ответ, то бот через 12 часов тебе об этом напомнит.	&#128579;'
+            , parse_mode=ParseMode.HTML)
         await asyncio.sleep(5)
         await bot.send_message(user_id, 'Введите время (например 17:05) для получения ежедневных уведомлений:')
         await states.PsgText.next()
@@ -66,15 +67,13 @@ def handlers(dp):
         global user_time
         global total_seconds
         user_time = message.text
-        pt = datetime.strptime(user_time, '%H:%M')
-        total_seconds = pt.minute*60 + pt.hour*3600
         await state.finish()
         await message.reply("Теперь выбери уровень (количество вопросов в день): ", reply_markup=keyboards.level_kb())
 
     @dp.callback_query_handler(text='btn1')
     async def process_callback_button1(call: types.CallbackQuery):
         await bot.send_message(user_id, FIRST_BUTTON.format(user_time))
-        await scheduler(total_seconds)
+        await scheduler(user_time)
 
     @dp.callback_query_handler(text='btn2')
     async def process_callback_button2(call: types.CallbackQuery):
@@ -88,16 +87,19 @@ def handlers(dp):
     @dp.message_handler(commands=["hint"])
     async def send_hint(message: Message):
         await bot.send_message(user_id, hints[question_number])
-       # await message.answer(hints[question_number])
 
     async def scheduler(time):
         aioschedule.every().day.at(time).do(send_question_test)
         # aioschedule.every(time).seconds.do(send_question_test)
-        aioschedule.every().day.at(time+43200).do(check_user_answered)
+        pt = datetime.strptime(user_time, '%H:%M')
+        time_with_twelf = f'{(pt.hour+12)%24}:{pt.minute}'
+        total_seconds = pt.minute * 60 + pt.hour * 3600
+
+        aioschedule.every().day.at(time_with_twelf).do(check_user_answered)
 
         while True:
             await aioschedule.run_pending()
-            await asyncio.sleep(time)
+            await asyncio.sleep(total_seconds)
             end_script = text
             if end_script == '/stop':
                 end_script = ''
@@ -109,9 +111,11 @@ def handlers(dp):
         if question_number < len(keys):
             if photo := questions_and_answers[keys[question_number]][1]:
                 photo_init = open(photo, 'rb')
-                await bot.send_photo(user_id, photo_init, caption=keys[question_number], parse_mode='html', reply_markup=keyboards.menu_kb())
+                await bot.send_photo(user_id, photo_init, caption=keys[question_number], parse_mode='html',
+                                     reply_markup=keyboards.menu_kb())
             else:
-                await bot.send_message(user_id, keys[question_number], parse_mode='html', reply_markup=keyboards.menu_kb())
+                await bot.send_message(user_id, keys[question_number], parse_mode='html',
+                                       reply_markup=keyboards.menu_kb())
             await states.PsgQuestion.question.set()
 
     @dp.message_handler(state=states.PsgQuestion.question)
