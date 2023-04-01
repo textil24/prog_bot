@@ -9,3 +9,4 @@ FIRST_BUTTON = "Поздравляю! Теперь ежедневно в {0} т�
 is_user_answered = False
 question_number = -1
 user_time = 0
+START_MESSAGE=""

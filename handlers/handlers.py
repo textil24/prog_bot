@@ -6,7 +6,7 @@ import aiogram.utils.markdown as md
 from aiogram.dispatcher import FSMContext
 from aiogram.types import Message, ParseMode
 
-from data.values import *
+from data.consts import *
 from . import states
 from config import *
 from keyboards import keyboards
@@ -43,11 +43,11 @@ def handlers(dp):
     keys = list(questions_and_answers)
 
     @dp.message_handler(commands=["start"])
-    async def start(message: Message):
+    async def start_handler(message: Message):
         global user_id
-        user_id = message.from_user.id
         global text
         global m
+        user_id = message.from_user.id
         m = message
         text = message.text
         await message.reply(
@@ -138,3 +138,7 @@ def handlers(dp):
             await bot.send_message(user_id, "Напоминаю, что нужно ответить на вопрос." +
                                    "Тебе поможет эта информация: ")
             await send_theory(m)
+
+
+def start_handler(message, param):
+    return None
